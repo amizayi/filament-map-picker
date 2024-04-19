@@ -45,6 +45,52 @@ composer require dotswan/filament-map-picker
 
 ## Basic Usage
 
+### Migration
+
+#### Option 1: Add `location` field and set cast to array
+
+Add a `location` JSON field to your database migration:
+
+```php
+Schema::table('your_table', function (Blueprint $table) {
+    $table->json('location')->nullable();
+});
+```
+
+#### Option 2: Add `latitude` and `longitude` fields
+
+Add `latitude` and `longitude` fields to your database migration:
+
+```php
+Schema::table('your_table', function (Blueprint $table) {
+    $table->decimal('latitude', 10, 7)->nullable();
+    $table->decimal('longitude', 10, 7)->nullable();
+});
+```
+
+### Model
+
+#### Option 1: Using `location` field
+
+If you chose Option 1, set the `location` attribute to cast to an array in your model:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class YourModel extends Model
+{
+    protected $casts = [
+        'location' => 'array',
+    ];
+}
+```
+
+#### Option 2: Using separate `latitude` and `longitude` fields
+
+If you chose Option 2, no additional changes are needed for your model.
+
+
+
 Resource file:
 
 ```php
@@ -116,7 +162,14 @@ Actions::make([
 ])->verticalAlignment(VerticalAlignment::Start);
 
 ```
+### Show Page or InfoList Page
 
+If you want to display the map and location as read-only on the show page or infolist page, and you have used the `draggable()` method to make the map draggable, you can set it to false on these pages:
+
+```php
+Map::make('location')
+    ->draggable(false); // Set draggable to false on show page or infolist page
+```
 
 ## License
 
